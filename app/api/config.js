@@ -1,4 +1,4 @@
-export const BASE_URL = 'https://kira-backend.nomoredomainswork.ru/api';
+export const BASE_URL = 'https://kira-backend.nomorepartiesco.ru/api';
 
 export const endpoints = {
   games: `${BASE_URL}/games`,
