@@ -10,22 +10,22 @@ export const isResponseOk = (response) => {
 
 export const getNormalizedGameDataById = async (url, id) => {
   const data = await getData(`${url}/${id}`);
-  return isResponseOk(data) ? normalizeDataObject(!data?[]:data) : data;
+  return isResponseOk(data) ? normalizeDataObject(data) : data;
 };
 
 export const getNormalizedGamesDataByCategory = async (url, category) => {
   const data = await getData(`${url}?categories.name=${category}`);
-  return isResponseOk(data) ? normalizeData(data) : data;
+  return isResponseOk(data) ? normalizeData(!data ? [] : data) : data;
 };
 
 const normalizeDataObject = (obj) => {
-  let str = JSON.stringify(obj)
-  
-  str = str.replaceAll('_id', 'id');
-  const newObj = JSON.parse(str)
-  const result = { ...newObj, category: newObj.categories }
+  let str = JSON.stringify(obj);
+
+  str = str.replaceAll("_id", "id");
+  const newObj = JSON.parse(str);
+  const result = { ...newObj, category: newObj.categories };
   return result;
-}
+};
 
 export const normalizeData = (data) => {
   return data.map((item) => {
@@ -34,92 +34,92 @@ export const normalizeData = (data) => {
 };
 
 export const authorize = async (url, data) => {
-    try {
-          /* fetch-запрос к серверу */
-      const response = await fetch(url, {
-              /* указываем метод POST */
-        method: "POST",
-              /* 
+  try {
+    /* fetch-запрос к серверу */
+    const response = await fetch(url, {
+      /* указываем метод POST */
+      method: "POST",
+      /* 
                   В headers добавляем информацию о передаваемом 
                   в теле запроса типе данных
               */
-        headers: { "Content-Type": "application/json" },
-              /* 
+      headers: { "Content-Type": "application/json" },
+      /* 
                   В тело запроса добавляем приведённый к строке 
                   объект с данными пользователя
               */
-        body: JSON.stringify(data),
-      });
-          /* 
+      body: JSON.stringify(data),
+    });
+    /* 
               Проверяем, что с ответом сервера всё ок, и, если нет, кидаем ошибку 
           */
-      if (response.status !== 200) {
-        throw new Error("Ошибка авторизации");
-      }
-          /* Сохраняем в константу result полученные данные */
-      const result = await response.json();
-          /* Возвращаем данные */
-      return result;
-    } catch (error) {
-          /* Если выше произошла ошибка, то возвращаем данные об ошибке */
-      return error;
+    if (response.status !== 200) {
+      throw new Error("Ошибка авторизации");
     }
-  };
-  /**
- * 
+    /* Сохраняем в константу result полученные данные */
+    const result = await response.json();
+    /* Возвращаем данные */
+    return result;
+  } catch (error) {
+    /* Если выше произошла ошибка, то возвращаем данные об ошибке */
+    return error;
+  }
+};
+/**
+ *
  * URL-адрес в виде строки, куда будет выполнен запрос
  * JWT–токен в виде строки
  */
 export const getMe = async (url, jwt) => {
-    try {
-      // Выполняем запрос
-      const response = await fetch(url, {
-        // Запрос выполняется методом GET
-        method: "GET",
-        // JWT-токен передаётся в специальном заголовке Authorization
-        headers: { Authorization: `Bearer ${jwt}` },
-      });
-      if (response.status !== 200) {
-        throw new Error("Ошибка получения данных");
-      }
-      const result = await response.json();
-      return result;
-    } catch (error) {
-      return error;
+  try {
+    // Выполняем запрос
+    const response = await fetch(url, {
+      // Запрос выполняется методом GET
+      method: "GET",
+      // JWT-токен передаётся в специальном заголовке Authorization
+      headers: { Authorization: `Bearer ${jwt}` },
+    });
+    if (response.status !== 200) {
+      throw new Error("Ошибка получения данных");
     }
-  };
-  export const setJWT = (jwt) => {
-    localStorage.setItem("jwt", jwt);
-  };
-  
-  export const getJWT = () => {
-      return localStorage.getItem("jwt");
-  };
-  
-  export const removeJWT = () => {
-    localStorage.removeItem("jwt");
-  };
- 
-  export const checkIfUserVoted = (game, userId) => {
-    return game.users.find((user) => user.id === userId);
-  };
-  
-  export const vote = async (url, jwt, usersArray) => {
-    try {
-      const response = await fetch(url, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${jwt}`,
-        },
-        body: JSON.stringify({ users: usersArray }),
-      })
-      if (response.status !== 200) {
-        throw new Error('Ошибка голосования')
-      }
-      const result = await response.json()
-      return result
-    } catch (error) {
-      return error
-    }
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    return error;
   }
+};
+export const setJWT = (jwt) => {
+  localStorage.setItem("jwt", jwt);
+};
+
+export const getJWT = () => {
+  return localStorage.getItem("jwt");
+};
+
+export const removeJWT = () => {
+  localStorage.removeItem("jwt");
+};
+
+export const checkIfUserVoted = (game, userId) => {
+  return game.users.find((user) => user.id === userId);
+};
+
+export const vote = async (url, jwt, usersArray) => {
+  try {
+    const response = await fetch(url, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${jwt}`,
+      },
+      body: JSON.stringify({ users: usersArray }),
+    });
+    if (response.status !== 200) {
+      throw new Error("Ошибка голосования");
+    }
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    return error;
+  }
+};
